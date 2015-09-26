@@ -1,0 +1,76 @@
+
+<script type="text/javascript">
+  document.getElementById("home_tab").className = "active";
+</script>
+
+
+<div class="row">
+
+  <div class="col-md-7">
+
+    <%= form_for(@job, :html => {:name => "PDB"}) do |f| %>  
+    <fieldset>
+      <legend>Submit a new job:</legend>
+      <div class="row">
+        <div class="col-md-6 form-group">
+          <%= f.label :PDB_id, "Enter PDB ID (ex: 3D3D):", class: 'control-label' %>
+          <div>
+            <%= f.text_field :PDB_id, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-5 form-group">
+          <%= f.label :PDB_file, "Or upload PDB File:", class: 'control-label' %>
+          <div>
+            <%= f.file_field :PDB_file %>
+          </div>
+        </div>
+      </div>
+
+      <label>Select which modules to run: </label>
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :BL_needed %> Surface-critical
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :GN_needed %> Interior-critical
+        </label>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :email, "(Optional) Email address for notifications:", class: 'control-label' %>
+        <div>
+          <%= f.text_field :email, class: "form-control", id: "email-form" %>
+        </div>
+      </div>
+
+      <%= render 'shared/error_messages' %>
+
+      <%= f.submit "Submit", class: "btn btn-default" %> 
+    </fieldset>
+    <% end %>
+
+  </div>
+
+  <div class="col-md-5">
+
+    <%= form_tag "/search", method: :get, :class => "form-inline" do %>
+    <fieldset>
+      <legend>Retrieve job results:</legend>
+      <div class="form-group">
+        <%= label_tag(:job_id, "Job id:") %>
+        <%= text_field_tag :job_id, nil, class: 'form-control' %>
+        <%= submit_tag "Retrieve", name: nil, class: "btn btn-default" %>
+      </div>
+    </fieldset>
+    <% end %>
+
+  </div>
+
+</div>
+
+
+

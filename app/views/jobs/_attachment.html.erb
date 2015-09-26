@@ -1,0 +1,14 @@
+
+<!--
+<h1> Attachment: <%= attachment %> </h1>
+
+File name: <%= @job.send(attachment+'_file_name') %> <br>
+
+File size: <%= @job.send(attachment+'_file_size') %> <br>
+
+File type: <%= @job.send(attachment+'_content_type') %> <br>
+
+Updated at: <%= @job.send(attachment+'_updated_at') %> <br>
+-->
+
+<%= link_to "Download", :controller => "jobs", :action => "download", :uuid => @job.uuid, :attachment => attachment %>

@@ -1,0 +1,23 @@
+$( document ).ready(function() {
+  
+  var form = document.getElementById('new_job');
+  form.onsubmit = function() {
+    
+    var PDB_id_field = document.getElementById('job_PDB_id').value;
+    var PDB_file_field = document.getElementById('job_PDB_file').value;
+    if (PDB_file_field == "" && PDB_id_field == "") {
+      alert("Please input a PDB id or upload a PDB file");
+      return false;
+    }
+
+
+    if (!$("#job_BL_needed").prop("checked") && !$("#job_GN_needed").prop("checked")) {
+    	alert("Please select at least one module to run");
+    	return false;
+    }
+
+  }
+
+
+
+});

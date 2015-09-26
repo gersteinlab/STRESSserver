@@ -1,0 +1,35 @@
+
+<script type="text/javascript">
+  document.getElementById("documentation_tab").className = "active";
+</script>
+
+<h3>Introduction</h3>
+<p>
+The two modules hosted on the STRESS server identify potential allosteric residues on both the protein surface and within the interior. These two modules and their output files are described here, and examples of proteins with potential allosteric residues highlighted are given below, along with snapshots of the output files generated from running STRESS. See our main paper for further details on the implementation. All source code is provided in the Download tab. Note that, in both the surface- and interior-critical residue identification modules, heteroatoms are removed.<br>
+</p>
+
+<p>
+<b>Module for Identifying Surface-Critical Sites</b><br>
+Inspired by the binding leverage framework first introduced by Mitternacht and Berezovsky in 2011, this module efficiently identifies pockets on the protein surface such that their occlusion with small ligands is predicted to drastically affect conformational change – such surface sites are thus inferred to be allosteric hotspots. Monte Carlo simulations are used to probe the all-atom protein surface with flexible ligands. After automated thresholding, those sites at which the simulated ligand strongly interferes with conformational change are given as output in the form of a ranked list of sites, with each site being represented by its list of constituent residues, as given by their residue IDs and corresponding chains. Each site usually contains 10 residues, and never more than 10. In the output file provided (ex: “3D3D__SURFACE_CRITICAL_residues.dat”), each row corresponds to a particular allosteric surface site, and columns contain the following data:<br>
+</p>
+
+<p class="indent">
+Column 1:   Index of the binding site from Monte Carlo simulations (this is used by the STRESS developers for the purpose of thesholding the list of ranked sites)<br>
+Column 2:   Binding leverage score for site – higher values signify that the site is such that occlusion by ligand strongly interferes with large-scale protein motions, and thus likely has a stronger allosteric affect<br>
+Columns 3+:   The list of surface-critical residues in the given site, in the format <RESID_CHAIN><br></p>
+
+<p>
+<b>Module for Identifying Interior-Critical Residues</b><br>
+Allosteric residues within the protein interior often function as essential communication ‘bottlenecks’ between distinct regions. To identify such bottleneck residues, this computationally efficient module represents a protein structure as a  network of interacting residues, and simultaneously incorporates information about conformational change. The list of residues given as output are thus predicted to function in essential communication bottlenecks within the protein, and are thus potentially allosteric (see our publication for details). The output file provided (ex: “3D3D__INTERIOR_CRITICAL_residues.txt”) has the following format:<br>
+</p>
+
+<p class="indent"> 
+Column 1:   RESIDUE (the 0-based index of the residue in the processed PDB file)<br>
+Column 2:   ResID (as it appears in the PDB file)<br>
+Column 3:   Residue type (ex: “VAL”)<br>
+Column 4:   Chain <br>
+</p>
+
+<%= image_tag 'surface_critical_format_guide.jpg', class: "format-guide" %>
+<%= image_tag 'interior_critical_format_guide.jpg', class: "format-guide" %>
+

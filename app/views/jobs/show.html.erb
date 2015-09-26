@@ -1,0 +1,105 @@
+
+<script type="text/javascript">
+  document.getElementById("home_tab").className = "active";
+</script>
+
+
+<% if @job %>
+
+    <p>
+        <b><u>Job id:</b></u> <%= @job.uuid %>
+    </p>
+
+    <p>
+        PDB id: <% if @job.PDB_id %> <%= @job.PDB_id %> <% else %> N/A <% end %><br>
+        PDB file: <%= render partial: "attachment", object: 'PDB_file' %>
+    </p>
+
+
+    <% if @job.exitstatus == -1 %>
+
+        <p>
+            <b><u>Status:</b></u> Processing. 
+        </p>
+        <p>
+            Please check back later by refreshing this page or searching by the job id listed above.<br>
+            An email notification will be sent to the email address provided when the results are ready.
+        </p>
+
+    <% else %>
+
+        <p>
+            <b><u>Status:</b></u> 
+            <% if @job.exitstatus == 0 %> Success.
+            <% else %> Error.
+            <% end %>
+        </p>
+
+        <% if @job.BL_needed %>
+
+            <p>
+                <b><u>Surface-critical residues:</b></u>
+                <% if @job.exitstatus | 0b10000 == 0b10000 %>
+                    <% if @job.BL_result_file_name %>
+                        <%= render partial: "attachment", object: 'BL_result' %>
+                    <% else %>
+                        Server error: module completed successfully but result file is missing. Please contact us.
+                    <% end %>
+                <% else %>
+                    Module encountered errors.<br>
+                    <ul class="error-log">
+                        <% if @job.exitstatus & 0b00001 != 0 %>
+                            <li>Error: protein too small. Please try again, or if the problem persists, please contact us.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b00010 != 0 %>
+                            <li>Error: PDB file checking failed. Please verify PDB file format.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b00100 != 0 %>
+                            <li>Surface-critical error: PDB file too large. Please try downloading our code and running locally instead.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b01000 != 0 %>
+                            <li>Surface-critical error: post-processing step failed. Please try again, or if the problem persists, please contact us.</li>
+                        <% end %>
+                    </ul>
+                <% end %>
+            </p>
+
+        <% end %>
+
+        <% if @job.GN_needed %>
+
+            <p>
+                <b><u>Interior-critical residues:</b></u>
+                <% if @job.exitstatus | 0b01100 == 0b01100 %>
+                    <% if @job.GN_result_file_name %>
+                        <%= render partial: "attachment", object: 'GN_result' %>
+                    <% else %>
+                        Server error: module completed successfully but result file is missing. Please contact us.
+                    <% end %>
+                <% else %>
+                    Module encountered errors.<br>
+                    <ul class="error-log">
+                        <% if @job.exitstatus & 0b00001 != 0 %>
+                            <li>Error: protein too small. Please try again, or if the problem persists, please contact us.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b00010 != 0 %>
+                            <li>Error: PDB file checking failed. Please verify PDB file format.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b10000 != 0 %>
+                            <li>Interior-critical error: post-processing step failed. Please try again, or if the problem persists, please contact us.</li>
+                        <% end %>
+                    </ul>
+                <% end %>
+            </p>
+
+        <% end %>
+
+
+    <% end %>
+
+
+<% else %>
+
+    Job not found in our database. Please double-check your job id.
+
+<% end %>

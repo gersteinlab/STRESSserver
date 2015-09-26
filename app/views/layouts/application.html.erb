@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>STRESS</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="masthead">
+    <h3 class="text-muted"><a href="/">STRESS</a> <span class="text-muted subheading">A computationally-efficient framework for identifying potential allosteric residues at the protein surface and within the interior</span> </h3>
+    <nav>
+      <ul class="nav nav-justified">
+        <li id="home_tab"><a href="/">Home</a></li>
+        <li id="documentation_tab"><a href="/documentation">Documentation</a></li>
+        <li id="examples_tab"><a href="/examples">Examples</a></li>
+        <li id="download_tab"><a href="/download">Download</a></li>
+        <li id="citing_tab"><a href="/citing">Citing</a></li>
+        <li id="faq_tab"><a target="_blank" href="http://faq.gersteinlab.org/category/stress">FAQ</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <%= yield %>
+
+</div>
+
+</body>
+</html>
