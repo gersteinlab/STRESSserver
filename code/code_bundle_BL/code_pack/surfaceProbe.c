@@ -1192,12 +1192,19 @@ void sort(bindingSite *allSites, float *LC, int nSim)
 void mergeBindingSites(bindingSite *allSites, int Ntrials, float *LC)
 {
 	int i, j, k;
-	float Sim[Ntrials][Ntrials];
+	// float Sim[Ntrials][Ntrials];
+	float **Sim;
 	float max = 0.;
 	int mergingSites;
 	
+	Sim = calloc(sizeof(float*), Ntrials);
+	for (i=0; i<Ntrials; i++) 
+		Sim[i] = calloc(sizeof(float), Ntrials);
+
 	printf("->merging Sites\n");
 	
+	
+
 	k = 0;
 	for (i=0; i<Ntrials; i++)
 	{
@@ -1256,6 +1263,11 @@ void mergeBindingSites(bindingSite *allSites, int Ntrials, float *LC)
 	}
 	
 	printf("<-merging Sites\n");
+
+	for (i=0; i<Ntrials; i++)
+		free(Sim[i]);
+	free(Sim);
+
 	return;
 }				
 
