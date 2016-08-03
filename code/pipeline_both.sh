@@ -10,7 +10,7 @@
 ## 00000 => Success
 ## 00001 => FNM number < 10, protein too small
 ## 00010 => PDB file checking failed
-## 00100 => BL pipeline failed: PDB file too large, suggest user to run locally
+## 00100 => PDB file too large, suggest user to run locally
 ## 01000 => BL pipeline failed on step 4/5 (main C prog && post-analysis)
 ## 10000 => GN pipeline failed on step 4/5 (main C prog && post-analysis)
 EXIT_CODE=0
@@ -29,6 +29,7 @@ SIMPPRG=$CODE_BUNDLE_BL"/just_make_simplified_pdb_and_rm_HETATM.py"
 RMCAPRG=$CODE_BUNDLE_BL"/just_make_simplified_pdb__CA_LINES_ONLY.py"
 CALPHAPRG=$CODE_BUNDLE_BL"/calpha_modes.py"
 TOPNMPRG=$CODE_BUNDLE_BL"/top_nm.pl"
+ADDZEROS=$CODE_BUNDLE_BL"/add_zeros_to_fnm.py"
 
 # BL specific code
 BOXSIZEPRG=$CODE_BUNDLE_BL"/get_box_size_to_det_num_MC_steps.py"
@@ -92,9 +93,17 @@ $PYTHONPATH $RMCAPRG $SIMPPDB $CAONLYPDB
 }
 echo "`date -u`: ${LOGTAG} Finished step I: generate CA only PDB" >> $LOGFILE
 
+# check that PDB file is not too large
+# SSTEP="$(((`wc -l $CAONLYPDB | awk '{print $1}'`) * 10))"
+# [ $SSTEP -gt 20000 ] && 
+# {
+# 	echo "`date -u`: ${LOGTAG} PDB file too large!" >> $LOGFILE
+# 	exit 4
+# }
+
 # step II: generate fnm_t10 file
 echo "`date -u`: ${LOGTAG} Starting step II: generate fnm_t10 file" >> $LOGFILE
-`$PYTHONPATH $CALPHAPRG $CAONLYPDB f | $PERLPATH $TOPNMPRG 10 > $TOPFNM`
+`$PYTHONPATH $CALPHAPRG $CAONLYPDB f | $PERLPATH $TOPNMPRG 10 | $PYTHONPATH $ADDZEROS > $TOPFNM`
 FNMSIZE=$(grep "BEGIN" $TOPFNM | wc -l)
 if [ $FNMSIZE -ne 10 ]; then
 	echo "`date -u`: ${LOGTAG} Not enough FNM(10), protein too small!" >> $LOGFILE
@@ -110,11 +119,11 @@ echo "`date -u`: ${LOGTAG} Finished step II: generate fnm_t10 file" >> $LOGFILE
 	MCSTEP=$($PYTHONPATH $BOXSIZEPRG $SIMPPDB | cut -f2)
 	SSTEP="$(((`wc -l $CAONLYPDB | awk '{print $1}'`) * 10))"
 
-	[ $SSTEP -gt 20000 ] && 
-	{
-		echo "`date -u`: ${LOGTAG} BL: PDB file too large!" >> $LOGFILE
-		let "EXIT_CODE += 4"
-	} ||
+	# [ $SSTEP -gt 20000 ] && 
+	# {
+	# 	echo "`date -u`: ${LOGTAG} BL: PDB file too large!" >> $LOGFILE
+	# 	let "EXIT_CODE += 4"
+	# } ||
 	{
 		# For dev., we only use 50 simulation steps here
 		# SSTEP=50

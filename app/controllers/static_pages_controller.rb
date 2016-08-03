@@ -12,4 +12,5 @@ class StaticPagesController < ApplicationController
   def examples
   end
 
+
 end

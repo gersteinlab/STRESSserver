@@ -2,11 +2,10 @@ Rails.application.routes.draw do
 
   root 'jobs#new'
 
+  get '/jobs', to: 'jobs#new'
   get '/jobs/download/:uuid', to: 'jobs#download'
   get '/search' => 'jobs#search'
   resources :jobs
-
-  post '/worker', to: 'workers#process_job'
 
   get 'download' => 'static_pages#download'
   get 'documentation' => 'static_pages#documentation'

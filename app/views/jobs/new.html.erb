@@ -12,7 +12,7 @@
     <fieldset>
       <legend>Submit a new job:</legend>
       <div class="row">
-        <div class="col-md-6 form-group">
+        <div class="col-md-6 form-group <% if @size || @invalid %> has-error <% end %>">
           <%= f.label :PDB_id, "Enter PDB ID (ex: 3D3D):", class: 'control-label' %>
           <div>
             <%= f.text_field :PDB_id, class: "form-control" %>
@@ -20,13 +20,19 @@
         </div>
         <div class="col-md-1">
         </div>
-        <div class="col-md-5 form-group">
+        <div class="col-md-5 form-group <% if @size || @invalid %> has-error <% end %>">
           <%= f.label :PDB_file, "Or upload PDB File:", class: 'control-label' %>
           <div>
             <%= f.file_field :PDB_file %>
           </div>
         </div>
       </div>
+
+      <% if @invalid %>
+        <p class="text-danger"> 
+          Error: Invalid PDB file or id. Please double check your input.
+        </p>
+       <% end %>
 
       <label>Select which modules to run: </label>
       <div class="checkbox">
@@ -47,9 +53,13 @@
         </div>
       </div>
 
-      <%= render 'shared/error_messages' %>
-
       <%= f.submit "Submit", class: "btn btn-default" %> 
+
+      <% if @size %>
+        <br><br><p class="text-danger">Note: Due to the high cost of running simulations on very large proteins on Amazon's servers, we are currently only able to accept proteins with a maximum size of 1300 residues. Your selected protein has a size of <b><%= @size %></b> residues. Please consider downloading our code and running our algorithms locally. We apologize for the inconvenience.</p>
+      <% else %>
+        <br><br><p>Note: Due to the high cost of running simulations on very large proteins on Amazon's servers, we are currently only able to accept proteins with a maximum size of 1300 residues. For larger proteins, please download our code and run our algorithms locally. We apologize for the inconvenience.</p>
+      <% end %>
     </fieldset>
     <% end %>
 
@@ -60,11 +70,17 @@
     <%= form_tag "/search", method: :get, :class => "form-inline" do %>
     <fieldset>
       <legend>Retrieve job results:</legend>
-      <div class="form-group">
+      <div class="form-group <% if @not_found %> has-error <% end %>">
         <%= label_tag(:job_id, "Job id:") %>
         <%= text_field_tag :job_id, nil, class: 'form-control' %>
         <%= submit_tag "Retrieve", name: nil, class: "btn btn-default" %>
       </div>
+
+      <% if @not_found %>
+        <br><br><p class="text-danger">
+          Job not found in our database. Please double-check your job id.
+        </p>
+      <% end %>
     </fieldset>
     <% end %>
 

@@ -14,18 +14,34 @@ class JobsController < ApplicationController
     fetch_and_save_PDB_file_if_PDB_id_specified
     save_other_fields
     if @job.save && @job.PDB_file
-      add_job_to_queue
-      redirect_to job_url(@job.uuid)
+      @job.PDB_file.copy_to_local_file(:original, @job.uuid)
+      pdb_size = `grep "^ATOM" #{@job.uuid} | awk '{if ($3=="CA") print $0}' | wc -l`.to_i
+      `rm -f #{@job.uuid}`
+      if pdb_size > 1300
+        @job.destroy
+        @size = pdb_size
+        render "new"
+      else
+        add_job_to_queue
+        redirect_to job_url(@job.uuid)
+      end
     else
-      @job.errors.clear
-      @job.errors.add(:base, "Error: Invalid PDB file or id.")
+      @invalid = true
       render 'new'
     end
   end
 
   def search
-     @job = Job.find_by(uuid: params[:job_id].strip)
-     render action: 'show'
+    @job = Job.find_by(uuid: params[:job_id].strip)
+    if @job
+      render action: 'show'
+    else
+      @not_found = true
+      @job = Job.new
+      @job.BL_needed = true
+      @job.GN_needed = true
+      render 'new'
+    end
   end
 
 
@@ -46,14 +62,14 @@ class JobsController < ApplicationController
 
   private
 
-    #needs fix
     #params[:job][:GN_needed] will be "0" or "1"
     #but @job.GN_needed is false or true
     def redirect_to_archived_result_if_available
+
       if params[:job][:PDB_id]
         @job = Job.find_by(PDB_id: params[:job][:PDB_id].upcase,
-                           GN_needed: params[:job][:GN_needed],
-                           BL_needed: params[:job][:BL_needed])
+                           GN_needed: params[:job][:GN_needed] == "1" ? true : false,
+                           BL_needed: params[:job][:BL_needed] == "1" ? true : false)
         if @job
           redirect_to @job
         end
@@ -66,13 +82,14 @@ class JobsController < ApplicationController
       queue_url = sqs.get_queue_url(
         queue_name: queue_name
       ).queue_url
-      sqs.set_queue_attributes(
-        queue_url: queue_url,
-        attributes: { "VisibilityTimeout" => "43200" }
-      )
+      # sqs.set_queue_attributes(
+      #   queue_url: queue_url,
+      #   attributes: { "VisibilityTimeout" => "43200" }
+      # )
       sqs.send_message(
         queue_url: queue_url,
-        message_body: %Q[{ "job_id": "#{@job.uuid}" }]
+        message_body: "#{@job.uuid}"
+        # message_body: %Q[{ "job_id": "#{@job.uuid}" }]
       )
     end
 

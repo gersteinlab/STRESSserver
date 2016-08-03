@@ -55,7 +55,7 @@
                             <li>Error: PDB file checking failed. Please verify PDB file format.</li>
                         <% end %>
                         <% if @job.exitstatus & 0b00100 != 0 %>
-                            <li>Surface-critical error: PDB file too large. Please try downloading our code and running locally instead.</li>
+                            <li>Error: PDB file too large. Please try downloading our code and running locally instead.</li>
                         <% end %>
                         <% if @job.exitstatus & 0b01000 != 0 %>
                             <li>Surface-critical error: post-processing step failed. Please try again, or if the problem persists, please contact us.</li>
@@ -84,6 +84,9 @@
                         <% end %>
                         <% if @job.exitstatus & 0b00010 != 0 %>
                             <li>Error: PDB file checking failed. Please verify PDB file format.</li>
+                        <% end %>
+                        <% if @job.exitstatus & 0b00100 != 0 %>
+                            <li>Error: PDB file too large. Please try downloading our code and running locally instead.</li>
                         <% end %>
                         <% if @job.exitstatus & 0b10000 != 0 %>
                             <li>Interior-critical error: post-processing step failed. Please try again, or if the problem persists, please contact us.</li>
