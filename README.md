@@ -4,7 +4,13 @@ Repo for website of an allosteric project in Gersten lab
 
 All code from DC in code folder
 
-## Tasks 
+## Note about potential security vulnerability
+The current version of this server has a security vulnerability. This vulnerability, which is in the rack module, has been classified by GitHub as a moderate severity security vulnerability. More information can be found here:
+https://nvd.nist.gov/vuln/detail/CVE-2018-16471
+and here:
+https://nvd.nist.gov/vuln/detail/CVE-2015-3225
+
+## Tasks
 - [x] Allow users to upload files
 - [x] Allow users to give PDB ID and then fetch files from PDB
 - [x] Let users select which module they want to run (BL or/and GN)
